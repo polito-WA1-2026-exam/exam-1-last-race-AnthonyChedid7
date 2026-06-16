@@ -3,7 +3,14 @@ import { getStations, getLines, getSegments, getEvents } from '../dao/network-da
 
 const router = express.Router();
 
-router.get('/network', async (req, res) => {
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated())
+        return next();
+
+    return res.status(401).json({ error: 'Not authenticated' });
+}
+
+router.get('/network',isLoggedIn, async (req, res) => {
     try{
         const stations = await getStations();
         const lines = await getLines();
@@ -16,7 +23,7 @@ router.get('/network', async (req, res) => {
     }
 });
 
-router.get('/events', async (req, res) => {
+router.get('/events',isLoggedIn, async (req, res) => {
     try{
         const events = await getEvents();
         res.json(events);

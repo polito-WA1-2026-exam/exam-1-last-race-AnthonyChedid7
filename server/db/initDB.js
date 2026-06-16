@@ -58,21 +58,22 @@ db.serialize(() => {
         )
     `);
 
-    db.run(`
-        CREATE TABLE games(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            start_station_id INTEGER NOT NULL,
-            destination_station_id INTEGER NOT NULL,
-            final_score INTEGER NOT NULL,
-            played_at TEXT DEFAULT CURRENT_TIMESTAMP,
+   db.run(`
+    CREATE TABLE games(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        start_station_id INTEGER NOT NULL,
+        destination_station_id INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        final_score INTEGER,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        completed_at TEXT,
 
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            FOREIGN KEY(start_station_id) REFERENCES stations(id),
-            FOREIGN KEY(destination_station_id) REFERENCES stations(id)
-        )
-    `);
-
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(start_station_id) REFERENCES stations(id),
+        FOREIGN KEY(destination_station_id) REFERENCES stations(id)
+    )
+`);
   
 
 
@@ -180,22 +181,21 @@ db.serialize(() => {
         );
     });
 
-    const games = [
-        [1, 1, 13, 18],
-        [1, 14, 9, 22],
-        [2, 5, 10, 12],
-        [2, 15, 13, 25]
-    ];
+        const games = [
+            [1, 1, 13, 'completed', 18, '2026-06-01 10:00:00'],
+            [1, 14, 9, 'completed', 22, '2026-06-02 11:30:00'],
+            [2, 5, 10, 'completed', 12, '2026-06-03 15:00:00'],
+            [2, 15, 13, 'completed', 25, '2026-06-04 18:20:00']
+        ];
 
-    games.forEach(game => {
-        db.run(
-            `INSERT INTO games(user_id, start_station_id, destination_station_id, final_score)
-             VALUES (?, ?, ?, ?)`,
-            game
-        );
-    });
-
-    console.log("Database created and seeded");
+        games.forEach(game => {
+            db.run(
+                `INSERT INTO games(user_id, start_station_id, destination_station_id, status, final_score, completed_at)
+                VALUES (?, ?, ?, ?, ?, ?)`,
+                game
+            );
+        });
+            console.log("Database created and seeded");
 });
 
 
