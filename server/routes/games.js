@@ -65,18 +65,21 @@ function isInterchangeStation(stationId, segments){
 function validateRoute(route, segments, startStationId, destinationStationId){
     if(route.length === 0)
         return false;
-
+    console.log('Validating route:', route);
+    console.log('Start:', startStationId, 'Destination:', destinationStationId);
     const usedSegments = new Set();
     let currentStation = startStationId;
     let currentLineId = null;
 
-    for(const segmentId of route){
+         for(const segmentId of route){
+        console.log('Current station:', currentStation, 'Segment id:', segmentId);
 
-        if(usedSegments.has(segmentId))
-            return false;
+          if(usedSegments.has(segmentId))
+        return false;
 
-        const segment = findSegmentById(segments, segmentId);
+      const segment = findSegmentById(segments, segmentId);
 
+       console.log('Segment:', segment);
         if(!segment)
             return false;
 
@@ -168,6 +171,8 @@ function isLoggedIn(req, res, next){
 
 router.post('/games/:id/submit', isLoggedIn, async (req, res) => {
     try{
+        console.log('BACKEND received body:', req.body);
+        console.log('BACKEND route:', req.body.route);
         const game = await getGameById(req.params.id);
 
         if(!game)
@@ -190,6 +195,7 @@ router.post('/games/:id/submit', isLoggedIn, async (req, res) => {
             game.start_station_id,
             game.destination_station_id
         );
+        
 
         if(!valid){
             await completeGame(game.id, 0);

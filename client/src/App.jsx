@@ -1,122 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react';
+import API from './API';
+import './App.css';
+import LoginForm from './components/LoginForm';
+import NetworkView from './components/NetworkView';
+import GamePage from './components/GamePage';
+import RankingPage from './components/RankingPage';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(null);
+  const [page, setPage] = useState('instructions');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    API.getUserInfo()
+      .then((u) => setUser(u))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleLogin(credentials) {
+    const loggedUser = await API.logIn(credentials);
+    setUser(loggedUser);
+    setPage('setup');
+  }
+
+  async function handleLogout() {
+    await API.logOut();
+    setUser(null);
+    setPage('instructions');
+  }
+
+  if (loading) {
+    return <main className="app">Loading...</main>;
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
+    <main className="app">
+      <nav className="navbar">
+        <h1>Last Race</h1>
+        </nav>
+
+        <div className="game-menu">
+          <button onClick={() => setPage('instructions')}>Home</button>
+
+          {user && (
+            <>
+              <button onClick={() => setPage('setup')}>Map</button>
+              <button onClick={() => setPage('game')}>Play</button>
+              <button onClick={() => setPage('ranking')}>Ranking</button>
+              <button onClick={handleLogout}>Logout</button>
+            </>
+          )}
+       </div>
+     
+
+      {!user && <LoginForm onLogin={handleLogin} />}
+
+      {page === 'instructions' && (
+        <section className="card">
+          <h2>Home</h2>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+           How good is your memory? 
+           Last Race is a memory based metro game. 
+           Before starting your game,  go to the Map tab to memorize the lines and stations. 
+           Then start a new game where you will be given starting point and ending point stations, and 
+           you have to find a valid track from your start to end stations. You can pass through 
+           different metro lines but if you select 2 stations that have no metro between them you 
+           will therefore lose. A station cannot be selected twice and you have to submit your route 
+           before your time finishes. 
+           A valid route earns points, while random journey events may increase or decrease your final score.
+           Compete against other players and climb the leaderboard to become the best metro planner.
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        </section>
+      )}
 
-      <div className="ticks"></div>
+      {page === 'setup' && user && <NetworkView />}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {page === 'game' && user && <GamePage />}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {page === 'ranking' && user && <RankingPage />}
+    </main>
+  );
 }
 
-export default App
+export default App;
