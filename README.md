@@ -116,7 +116,7 @@
   - User: Luca  , password: password. 
 
 ## Use of AI Tools
-AI assistance (ChatGpt) was used for clarification on some concepts related to authentication, session management, cookies, and secure user-game association. The tool helped clarify how to prevent unauthorized users from accessing or modifying games belonging to other users. The final implementation and integration were completed by me with some help by the LLM. 
+AI assistance "ChatGpt" was used for clarification on some concepts related to authentication, session management, cookies, and secure user-game association. The tool helped clarify how to prevent unauthorized users from accessing or modifying games belonging to other users. The final implementation and integration were completed by me with some help by the LLM. 
 
 Additionaly, assistance from "CHATGPT" was also used to assist with frontend visual design and user interface improvements, including selecting colors, styling components, enhancing page layouts, and refining the overall look and feel of the application. 
 
